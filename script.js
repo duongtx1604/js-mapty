@@ -17,20 +17,32 @@ if (navigator.geolocation) {
       const { latitude } = position.coords;
       const { longitude } = position.coords;
 
-      const coord = [latitude, longitude];
+      const coords = [latitude, longitude];
 
       //load map
-      const map = L.map('map').setView(coord, 10);
+      const map = L.map('map').setView(coords, 10);
 
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution:
           '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
       }).addTo(map);
 
-      L.marker(coord)
-        .addTo(map)
-        .bindPopup('A pretty CSS popup.<br> Easily customizable.')
-        .openPopup();
+      map.on('click', function (mapEvent) {
+        const { latlng: item } = mapEvent;
+        L.marker(item)
+          .addTo(map)
+          .bindPopup(
+            L.popup({
+              maxWidth: 100,
+              minWidth: 50,
+              autoClose: false,
+              closeOnClick: false,
+              className: 'running-popup',
+            })
+          )
+          .setPopupContent('Workout')
+          .openPopup();
+      });
     },
     function () {
       alert('Could not get your position');
